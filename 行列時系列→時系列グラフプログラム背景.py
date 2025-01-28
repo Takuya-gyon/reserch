@@ -10,7 +10,7 @@ plt.rcParams["font.family"] = "MS Gothic"  # Windows用フォント（Mac/Linux�
 # データのパス
 data_dir = "data/行列時系列/"
 score_file = "data/q_score.csv"
-background_image_path = "data/Main_resized.png"  # 背景画像のパス
+background_image_path = "data/carbon_clip_resized.png"  # 背景画像のパス
 output_dir = "output/行の時系列グラフプログラム背景/"
 os.makedirs(output_dir, exist_ok=True)
 
@@ -59,22 +59,26 @@ for question in questions: #問題ループ
                 continue
             
             # 縦軸の範囲設定（反転用に上下を逆に設定）
+            """
             if question == "q1":
                 y_min, y_max = 110, 84  # 反転のため上下を逆に
             elif question == "q2":
                 y_min, y_max = 122, 110
             else:  # q3以降
                 y_min, y_max = 149, 0
+            """
+            y_min, y_max = 149, 0
+            
             
             # グラフ作成
             plt.figure(figsize=(8, 6))
-            plt.plot(gaze_data["time"], gaze_data["line"], label="line", color="blue")
+            plt.plot(gaze_data["time"], gaze_data["line"], label="line",alpha=0.5, color="blue")
             plt.title(f"{subject} - {question} ({correctness})", fontsize=14)
             plt.xlabel("Time", fontsize=12)
             plt.ylabel("Line", fontsize=12)
             plt.ylim(y_min, y_max)  # 反転した縦軸の範囲を設定
-            plt.legend(fontsize=10)
-            plt.grid(True)
+            #plt.legend(fontsize=10)
+            #plt.grid(True)
             
             # グラフを背景透過で保存
             graph_path = "temp/image/transparent_graph.png"
@@ -82,19 +86,19 @@ for question in questions: #問題ループ
             plt.close()
             
             # Pillowで画像を合成
-            background = Image.open(background_image_path)
+            background = Image.open(background_image_path).convert("RGBA")
             graph = Image.open(graph_path).convert("RGBA")
-            w, h = graph.size
-            container = Image.new("RGBA", (w, h), 0)
+            w, h = background.size
+            container = Image.new("RGBA", (w, h))
             
             # 背景画像にグラフを重ねる
-            for i in range(6):
-                out_image = container.paste(background, (185 + i * background.size[0], 105))
-            out_image = Image.alpha_composite(container, graph)
+            t = 0.838
+            container.paste(background.resize((int(w * t), int(h * t))), (55, 168))
+            container = Image.alpha_composite(container, graph.resize((w, h)))
 
             # 一時的にPDFとして保存
             temp_pdf = f"temp/pdf/temp_{subject} - {question}.pdf"
-            out_image.save(temp_pdf, "PDF")
+            container.save(temp_pdf, "PDF")
          
             # マージ用オブジェクトに追加
             merger.append(temp_pdf)
