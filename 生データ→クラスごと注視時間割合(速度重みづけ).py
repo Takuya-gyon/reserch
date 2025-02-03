@@ -5,7 +5,7 @@ from PIL import Image, ImageDraw
 from PyPDF2 import PdfMerger
 
 # 日本語フォントを設定
-plt.rcParams["font.family"] = "MS Gothic"  # Windows用フォン:;ト（Mac/Linuxでは適切なフォントを設定）
+plt.rcParams["font.family"] = "MS Gothic"  # Windows用フォント（Mac/Linuxでは適切なフォントを設定）
 
 # lineカラムの範囲を指定（例として6つの範囲）
 ranges = [
